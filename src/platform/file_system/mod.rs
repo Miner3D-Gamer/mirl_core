@@ -2,9 +2,9 @@ mod native;
 pub use crate::platform::*;
 // pub use native::*;
 
-/// Why bother reading files if you can't process them? Let [`file_data::FileData`] fix that.
-mod file_data;
-pub use file_data::{DataType, FileData};
+// /// Why bother reading files if you can't process them? Let [`file_data::FileData`] fix that.
+// mod file_data;
+// pub use file_data::{GenericDataType, BinaryData};
 
 // #[cfg(feature = "font_support")]
 // #[cfg(not(target_arch = "wasm32"))]

@@ -8,8 +8,6 @@ pub use fontdue;
 pub use image;
 #[cfg(feature = "random")]
 pub use rand;
-#[cfg(feature = "svg")]
-pub use resvg;
 #[cfg(feature = "serde")]
 pub use serde;
 #[cfg(feature = "strum")]

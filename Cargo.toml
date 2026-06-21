@@ -2,28 +2,23 @@
 name = "mirl_core"
 version = "0.0.0-alpha"
 edition.workspace = true
-readme.workspace = true
 repository.workspace = true
 
 
 [dependencies]
 mirl_derive = { version = "0.0.0-alpha", optional = true }
+
 # For random numbers
 rand = { version = ">=0.9.2", optional = true, default-features = false, features = [
     "thread_rng",
 ] }
-# Rasterize SVG
-resvg = { version = ">=0.45.1", optional = true, default-features = false }
-
 # Codec
 compactly = { version = "0.1.6", optional = true }
 serde = { version = ">=1.0", optional = true, default-features = false }
 bitcode = { version = "0.6.9", optional = true, default-features = false, features = [
     "derive",
 ] }
-wincode = { version = "0.4.5", optional = true, default-features = false, features = [
-    "derive",
-] }
+wincode = { version = "0.5.3", optional = true, features = ["derive"] }
 zerocopy = { version = "0.8.48", optional = true, default-features = false, features = [
     "float-nightly",
     "derive",
@@ -33,7 +28,7 @@ zerocopy = { version = "0.8.48", optional = true, default-features = false, feat
 strum = { version = ">=0.28", optional = true, default-features = false, features = [
     "derive",
 ] }
-enum_ext = { version = "0.5.2", optional = true, default-features = false }
+enum_ext = { version = "0.6.0", optional = true, default-features = false }
 
 
 # graphics & render
@@ -42,13 +37,15 @@ image = { version = ">=0.25.9", optional = true, default-features = false }
 # Font lib
 fontdue = { version = ">=0.9.3", optional = true, default-features = false }
 
+# Extra support for mirl_windowing cursor loading
+sevenz-rust2 = { version = "0.21.0", default-features = false, optional = true }
+
 [features]
 all = [
     "std",
     "all_codecs",
     "all_enum_extensions",
     "image",
-    "svg",
     "font_support",
 ]
 default = ["std"]
@@ -76,8 +73,6 @@ enum_ext = ["dep:enum_ext", "mirl_derive"]
 # Image lib support (Previously Imagery)
 image = ["dep:image"]
 
-# SVG/resvg supports
-svg = ["dep:resvg"]
 # Random numbers
 random = ["dep:rand", "std"]
 # Font/fontdue support
@@ -89,6 +84,9 @@ font_support = [
     # "dep:parking_lot",
 ]
 _checking = ["all"]
+
+mirl_windowing_support = ["dep:sevenz-rust2"]
+
 # TODO
 # Font libs to support:
 # - ab_glyph

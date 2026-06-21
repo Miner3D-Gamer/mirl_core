@@ -5,7 +5,7 @@ pub fn hex_to_number(hex: &str) -> Option<u32> {
 }
 #[must_use]
 /// Turn a u32 into a hex string
-pub fn number_to_hex(num: u32) -> String {
+pub fn color_to_hex(num: u32) -> String {
     format!("{num:x}")
 }
 
@@ -39,10 +39,7 @@ pub fn vec_try_remove<T>(list: &mut Vec<T>, index: usize) -> Option<T> {
 ///
 /// # Safety
 /// The caller must ensure that `index` is strictly less than `vec.len()`
-pub unsafe fn vec_unchecked_swap_remove<T>(
-    vec: &mut Vec<T>,
-    index: usize,
-) -> T {
+pub unsafe fn vec_unchecked_swap_remove<T>(vec: &mut Vec<T>, index: usize) -> T {
     let len = vec.len();
 
     // 1. Read the item out of the vector (takes ownership)
@@ -52,11 +49,7 @@ pub unsafe fn vec_unchecked_swap_remove<T>(
 
         // 2. If it's not the last element, move the last element to the cleared slot
         if index < len - 1 {
-            std::ptr::copy_nonoverlapping(
-                base_ptr.add(len - 1),
-                base_ptr.add(index),
-                1,
-            );
+            std::ptr::copy_nonoverlapping(base_ptr.add(len - 1), base_ptr.add(index), 1);
         }
 
         vec.set_len(len - 1);

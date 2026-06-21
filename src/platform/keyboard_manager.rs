@@ -3,9 +3,9 @@ use crate::platform::KeyCode;
 /// A struct to manage pressed keys
 #[derive(Clone, Debug, Copy, PartialEq, Eq)]
 #[allow(clippy::struct_excessive_bools)]
-pub struct KeyManager {
+pub struct KeyboardState {
     // Letters
-    a: bool,
+    key_a: bool,
     b: bool,
     c: bool,
     d: bool,
@@ -140,9 +140,9 @@ pub struct KeyManager {
     key_pad_enter: bool,
 
     // International & special characters
-    a_umlaut_ä: bool,
-    u_umlaut_ü: bool,
-    o_umlaut_ö: bool,
+    key_a_umlaut_ä: bool,
+    key_u_umlaut_ü: bool,
+    key_o_umlaut_ö: bool,
     ss: bool,
     â: bool,
     ú: bool,
@@ -202,18 +202,18 @@ pub struct KeyManager {
     world_2: bool,
 }
 
-impl Default for KeyManager {
+impl Default for KeyboardState {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl KeyManager {
+impl KeyboardState {
     /// Create a new `KeyManager` instance, keep in mind that key manager itself does not check if a key is down.
     #[must_use]
     pub const fn new() -> Self {
         Self {
-            a: false,
+            key_a: false,
             b: false,
             c: false,
             d: false,
@@ -329,9 +329,9 @@ impl KeyManager {
             key_pad_add: false,
             key_pad_decimal: false,
             key_pad_enter: false,
-            a_umlaut_ä: false,
-            u_umlaut_ü: false,
-            o_umlaut_ö: false,
+            key_a_umlaut_ä: false,
+            key_u_umlaut_ü: false,
+            key_o_umlaut_ö: false,
             ss: false,
             â: false,
             ú: false,
@@ -395,27 +395,29 @@ impl KeyManager {
     pub const fn set_key_state(&mut self, keycode: KeyCode, value: bool) {
         set_keycode(keycode, self, value);
     }
-    // REIMPLEMENT
-    // /// Get every pressed key (by checking if every single one is pressed)
-    // #[must_use]
-    // #[cfg(feature = "std")]
-    // #[cfg(feature = "system")]
-    // pub fn get_all_pressed_keys(&self) -> Vec<KeyCode> {
-    //     let mut key_codes = Vec::new();
-    //     for variant in KeyCode::AVAILABLE_KEYS {
-    //         if self.is_key_pressed(*variant) {
-    //             key_codes.push(*variant);
-    //         }
-    //     }
-    //     key_codes
-    // }
+    // TODO: Reimplement this to be smarter. Instead of checking every single key, get an input loop/HWND and get the key pressed/release events. Saving it to [`KeyboardManager`]
+    /// Get every pressed key (by checking if every single one is pressed)
+    #[must_use]
+    #[cfg(feature = "std")]
+    pub fn get_all_pressed_keys(&self) -> Vec<KeyCode> {
+        let mut key_codes = Vec::new();
+        for variant in KeyCode::AVAILABLE_KEYS {
+            if self.is_key_pressed(*variant) {
+                key_codes.push(*variant);
+            }
+        }
+        key_codes
+    }
 }
 
 /// Get the value [`KeyCode`] of [`KeyManager`]
 #[must_use]
-pub const fn map_keycode(keycode: KeyCode, key_manager: &KeyManager) -> bool {
+pub const fn map_keycode(
+    keycode: KeyCode,
+    key_manager: &KeyboardState,
+) -> bool {
     match keycode {
-        KeyCode::KeyA => key_manager.a,
+        KeyCode::KeyA => key_manager.key_a,
         KeyCode::KeyB => key_manager.b,
         KeyCode::KeyC => key_manager.c,
         KeyCode::KeyD => key_manager.d,
@@ -533,14 +535,14 @@ pub const fn map_keycode(keycode: KeyCode, key_manager: &KeyManager) -> bool {
         KeyCode::End => key_manager.end,
         KeyCode::Insert => key_manager.insert,
         KeyCode::Delete => key_manager.delete,
-        KeyCode::KeyAUmlautÄ => key_manager.a_umlaut_ä,
+        KeyCode::KeyAUmlautÄ => key_manager.key_a_umlaut_ä,
         KeyCode::KeyECircumflexÊ => key_manager.ê,
         KeyCode::KeyOGraveÒ => key_manager.ô,
         KeyCode::KeyUGraveÙ => key_manager.ù,
         KeyCode::KeyARingÅ => key_manager.å,
         KeyCode::KeyAELigatureÆ => key_manager.æ,
         KeyCode::KeyOSlashØ => key_manager.ø,
-        KeyCode::KeyUUmlautÜ => key_manager.u_umlaut_ü,
+        KeyCode::KeyUUmlautÜ => key_manager.key_u_umlaut_ü,
         KeyCode::KeyIGraveÌ => key_manager.ì,
         KeyCode::BrowserHome => key_manager.browser_home,
         KeyCode::BrowserRefresh => key_manager.browser_refresh,
@@ -563,7 +565,7 @@ pub const fn map_keycode(keycode: KeyCode, key_manager: &KeyManager) -> bool {
         KeyCode::KeyEthÐ => key_manager.ð,
         KeyCode::KeyNTildeÑ => key_manager.ñ,
         KeyCode::KeyOCircumflexÔ => key_manager.ò,
-        KeyCode::KeyOUmlautÖ => key_manager.o_umlaut_ö,
+        KeyCode::KeyOUmlautÖ => key_manager.key_o_umlaut_ö,
         KeyCode::KeyUAcuteÚ => key_manager.ú,
         KeyCode::KeyYAcuteÝ => key_manager.ý,
         KeyCode::KeyThornÞ => key_manager.þ,
@@ -600,11 +602,11 @@ pub const fn map_keycode(keycode: KeyCode, key_manager: &KeyManager) -> bool {
 /// Set the value [`KeyCode`] of [`KeyManager`]
 pub const fn set_keycode(
     keycode: KeyCode,
-    key_manager: &mut KeyManager,
+    key_manager: &mut KeyboardState,
     value: bool,
 ) {
     match keycode {
-        KeyCode::KeyA => key_manager.a = value,
+        KeyCode::KeyA => key_manager.key_a = value,
         KeyCode::KeyB => key_manager.b = value,
         KeyCode::KeyC => key_manager.c = value,
         KeyCode::KeyD => key_manager.d = value,
@@ -723,14 +725,14 @@ pub const fn set_keycode(
         KeyCode::End => key_manager.end = value,
         KeyCode::Insert => key_manager.insert = value,
         KeyCode::Delete => key_manager.delete = value,
-        KeyCode::KeyAUmlautÄ => key_manager.a_umlaut_ä = value,
+        KeyCode::KeyAUmlautÄ => key_manager.key_a_umlaut_ä = value,
         KeyCode::KeyECircumflexÊ => key_manager.ê = value,
         KeyCode::KeyOUmlautÖ => key_manager.ô = value,
         KeyCode::KeyUGraveÙ => key_manager.ù = value,
         KeyCode::KeyARingÅ => key_manager.å = value,
         KeyCode::KeyAELigatureÆ => key_manager.æ = value,
         KeyCode::KeyOSlashØ => key_manager.ø = value,
-        KeyCode::KeyUUmlautÜ => key_manager.u_umlaut_ü = value,
+        KeyCode::KeyUUmlautÜ => key_manager.key_u_umlaut_ü = value,
         KeyCode::KeyIGraveÌ => key_manager.ì = value,
         KeyCode::BrowserHome => key_manager.browser_home = value,
         KeyCode::BrowserRefresh => key_manager.browser_refresh = value,
@@ -753,7 +755,7 @@ pub const fn set_keycode(
         KeyCode::KeyEthÐ => key_manager.ð = value,
         KeyCode::KeyNTildeÑ => key_manager.ñ = value,
         KeyCode::KeyOGraveÒ => key_manager.ò = value,
-        KeyCode::KeyOCircumflexÔ => key_manager.o_umlaut_ö = value,
+        KeyCode::KeyOCircumflexÔ => key_manager.key_o_umlaut_ö = value,
         KeyCode::KeyUAcuteÚ => key_manager.ú = value,
         KeyCode::KeyYAcuteÝ => key_manager.ý = value,
         KeyCode::KeyThornÞ => key_manager.þ = value,
