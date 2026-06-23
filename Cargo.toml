@@ -37,17 +37,8 @@ image = { version = ">=0.25.9", optional = true, default-features = false }
 # Font lib
 fontdue = { version = ">=0.9.3", optional = true, default-features = false }
 
-# Extra support for mirl_windowing cursor loading
-sevenz-rust2 = { version = "0.21.0", default-features = false, optional = true }
-
 [features]
-all = [
-    "std",
-    "all_codecs",
-    "all_enum_extensions",
-    "image",
-    "font_support",
-]
+all = ["std", "all_codecs", "all_enum_extensions", "image", "font_support"]
 default = ["std"]
 std = []
 # Does nothing by itself. Needs another codec or enum flag to do something
@@ -85,7 +76,6 @@ font_support = [
 ]
 _checking = ["all"]
 
-mirl_windowing_support = ["dep:sevenz-rust2"]
 
 # TODO
 # Font libs to support:
